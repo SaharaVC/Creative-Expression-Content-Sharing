@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/xpression-backend.iml" filepath="$PROJECT_DIR$/.idea/xpression-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xpression-backend/xpression-backend.iml" filepath="$PROJECT_DIR$/xpression-backend/xpression-backend.iml" />
     </modules>
   </component>
 </project>
