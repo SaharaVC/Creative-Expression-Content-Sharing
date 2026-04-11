@@ -1,4 +1,4 @@
-package com.xpression.models;
+package com.xpression_backend.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
