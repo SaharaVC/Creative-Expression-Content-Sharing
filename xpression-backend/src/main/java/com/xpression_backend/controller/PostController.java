@@ -1,4 +1,4 @@
-package com.xpression.backend.controller;
+package com.xpression_backend.controller;
 
 import com.xpression.backend.model.Post;
 import com.xpression.backend.service.PostService;
