@@ -1,7 +1,7 @@
 package com.xpression_backend.controller;
 
-import com.xpression.backend.model.Post;
-import com.xpression.backend.service.PostService;
+import com.xpression_backend.model.Post;
+import com.xpression_backend.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
