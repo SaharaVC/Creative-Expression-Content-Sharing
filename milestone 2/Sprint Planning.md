@@ -9,7 +9,7 @@
 * Implement input validation and error handling
 * Connect login form to backend and store user data securely
 ---
-## 2. User Login & Authentication: _As a returning user, I want to be able to log in with my information securely so I can access my profile and feed._
+### 2. User Login & Authentication: _As a returning user, I want to be able to log in with my information securely so I can access my profile and feed._
 
 **Assigned to:** Trinity Banks
 
