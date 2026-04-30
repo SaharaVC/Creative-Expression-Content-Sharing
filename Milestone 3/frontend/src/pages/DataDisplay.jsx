@@ -1,70 +1,76 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import client from '../api/client'
+
+const MEDIA_TYPES = ['ALL', 'TEXT', 'IMAGE', 'MUSIC']
 
 function DataDisplay() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [filter, setFilter] = useState('ALL')
 
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const response = await client.get('/posts')
-        const normalizedPosts = Array.isArray(response.data)
-            ? response.data
-            : Object.values(response.data || {})
-        setPosts(normalizedPosts)
+        setLoading(true)
+        const url = filter === 'ALL' ? '/posts' : `/posts/media/${filter}`
+        const response = await client.get(url)
+        const data = Array.isArray(response.data) ? response.data : []
+        setPosts(data)
       } catch (err) {
-        setError('Unable to load posts from the backend. Confirm the Spring Boot API is running on the expected URL.')
+        setError('Unable to load posts from the backend.')
       } finally {
         setLoading(false)
       }
     }
-
     fetchPosts()
-  }, [])
+  }, [filter])
 
   return (
       <section className="page">
         <div className="page-header">
-          <p className="eyebrow">Protected page</p>
+          <p className="eyebrow">Community Feed</p>
           <h1>Data Display</h1>
-          <p className="page-intro">This page loads content with useEffect and renders API results in a table.</p>
+          <p>Browse all creative posts from the Xpression community.</p>
         </div>
 
-        <div className="card">
-          {loading ? <p>Loading posts...</p> : null}
-          {error ? <p className="message error">{error}</p> : null}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          {MEDIA_TYPES.map(type => (
+              <button
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  className={filter === type ? 'primary-button' : ''}
+                  style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+              >
+                {type}
+              </button>
+          ))}
+        </div>
 
-          {!loading && !error ? (
-              posts.length > 0 ? (
-                  <div className="table-wrapper">
-                    <table>
-                      <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Media Type</th>
-                        <th>Caption</th>
-                        <th>Date</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {posts.map((post) => (
-                          <tr key={post.id}>
-                            <td>{post.id}</td>
-                            <td>{post.mediaType || 'N/A'}</td>
-                            <td>{post.caption || 'No caption'}</td>
-                            <td>{post.date ? new Date(post.date).toLocaleString() : 'N/A'}</td>
-                          </tr>
-                      ))}
-                      </tbody>
-                    </table>
+        {loading ? (
+            <p>Loading posts...</p>
+        ) : error ? (
+            <p className="message error">{error}</p>
+        ) : posts.length === 0 ? (
+            <p>No posts found.</p>
+        ) : (
+            <div className="card-grid">
+              {posts.map(post => (
+                  <div key={post.id} className="card">
+              <span style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>
+                {post.mediaType}
+              </span>
+                    <h3 style={{ margin: '0.5rem 0' }}>{post.title}</h3>
+                    <p>{post.content}</p>
+                    {post.date && (
+                        <p style={{ fontSize: '0.75rem', color: '#aaa', marginTop: '0.5rem' }}>
+                          {new Date(post.date).toLocaleDateString()}
+                        </p>
+                    )}
                   </div>
-              ) : (
-                  <p>No posts returned yet. Add one from the form page.</p>
-              )
-          ) : null}
-        </div>
+              ))}
+            </div>
+        )}
       </section>
   )
 }

@@ -21,7 +21,7 @@ function Register() {
 
     try {
       setSubmitting(true)
-      const response = await client.post('/auth/register', formData)
+      const response = await client.post('/users/register', formData)
       const token = response.data?.token
       const user = response.data?.user || {
         name: formData.name,
@@ -35,7 +35,7 @@ function Register() {
       login({ token, user })
       navigate('/', { replace: true })
     } catch (err) {
-      setError('Registration failed. Make sure your backend exposes POST /api/auth/register and returns a JWT token.')
+      setError('Registration failed. Please try again.')
     } finally {
       setSubmitting(false)
     }

@@ -22,7 +22,7 @@ function Login() {
 
     try {
       setSubmitting(true)
-      const response = await client.post('/auth/login', formData)
+      const response = await client.post('/users/login', formData)
       const token = response.data?.token
       const user = response.data?.user || { email: formData.email }
 
