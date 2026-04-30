@@ -20,8 +20,8 @@ public class CommentService {
     }
 
     // READ: Get all feedback for a specific post
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<Comment> getCommentsByPost(Long postId) {
+        return commentRepository.findByPostId(postId);
     }
 
     // UPDATE: Edit feedback
