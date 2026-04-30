@@ -18,8 +18,8 @@ function Navbar() {
 
       <div className="nav-links">
         <NavLink to="/">Home</NavLink>
-        <NavLink to="/data">Data Display</NavLink>
-        <NavLink to="/form">Form Page</NavLink>
+        <NavLink to="/data">Posts</NavLink>
+        <NavLink to="/form">Create New Post</NavLink>
       </div>
 
       <div className="nav-actions">

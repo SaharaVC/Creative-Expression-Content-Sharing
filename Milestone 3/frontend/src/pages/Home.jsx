@@ -1,101 +1,74 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 import client from '../api/client'
+import { useAuth } from '../context/AuthContext'
 
 function Home() {
-  const [summary, setSummary] = useState({ posts: 0, comments: 0, recentPosts: [] })
+  const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { user } = useAuth()
 
   useEffect(() => {
-    async function loadSummary() {
+    async function fetchPosts() {
       try {
-        const [postsResponse, commentsResponse] = await Promise.all([
-          client.get('/posts'),
-          client.get('/comments'),
-        ])
-
-        const posts = Array.isArray(postsResponse.data)
-          ? postsResponse.data
-          : Object.values(postsResponse.data || {})
-        const comments = Array.isArray(commentsResponse.data)
-          ? commentsResponse.data
-          : Object.values(commentsResponse.data || {})
-
-        setSummary({
-          posts: posts.length,
-          comments: comments.length,
-          recentPosts: posts.slice(0, 3),
-        })
+        const response = await client.get('/posts')
+        const data = Array.isArray(response.data) ? response.data : []
+        setPosts(data.slice(0, 5))
       } catch (err) {
-        setError('Backend summary could not be loaded yet. Start Spring Boot or update the API routes.')
+        console.error('Failed to load posts', err)
       } finally {
         setLoading(false)
       }
     }
-
-    loadSummary()
+    fetchPosts()
   }, [])
 
   return (
-    <section className="page">
-      <div className="hero-card">
-        <div>
-          <p className="eyebrow">Creative Expression Content Sharing</p>
-          <h1>Welcome to the Xpression dashboard</h1>
-          <p className="page-intro">
-            Explore social posts, submit new content, and connect your frontend to the team backend.
-          </p>
+      <section className="page">
+        <div className="page-header">
+          <p className="eyebrow">Your Creative Space</p>
+          <h1>Welcome back{user?.name ? `, ${user.name}` : ''} ✦</h1>
+          <p>Xpression is where writers, artists, and musicians share their work and get real feedback. Post your art, discover new creators, and grow together.</p>
         </div>
 
-        <div className="grid two-col">
-          <Link to="/data" className="card-link">
-            <h3>View content data</h3>
-            <p>Open the data display page to fetch and render existing posts from the backend.</p>
+        <div className="card-grid">
+          <Link to="/data" className="card" style={{ cursor: 'pointer' }}>
+            <h2>🎨 Explore the Feed</h2>
+            <p>Browse writing, art, and music from the Xpression community. Filter by media type and leave feedback.</p>
           </Link>
-
-          <Link to="/form" className="card-link">
-            <h3>Create a new post</h3>
-            <p>Use the controlled form page to submit a post with validation and API integration.</p>
+          <Link to="/form" className="card" style={{ cursor: 'pointer' }}>
+            <h2>✍️ Share Your Work</h2>
+            <p>Post a piece of writing, an image of your art, or link a SoundCloud track. Your portfolio starts here.</p>
           </Link>
         </div>
-      </div>
 
-      <div className="card">
-        <h2>Backend summary</h2>
-        {loading ? <p>Loading summary...</p> : null}
-        {error ? <p className="message error">{error}</p> : null}
-
-        {!loading && !error ? (
-          <>
-            <div className="stats-row">
-              <div className="stat-box">
-                <span className="stat-label">Posts</span>
-                <strong>{summary.posts}</strong>
-              </div>
-              <div className="stat-box">
-                <span className="stat-label">Comments</span>
-                <strong>{summary.comments}</strong>
-              </div>
-            </div>
-
-            <h3>Recent posts</h3>
-            <div className="stack-list">
-              {summary.recentPosts.length > 0 ? (
-                summary.recentPosts.map((post) => (
-                  <div key={post.id} className="list-item">
-                    <strong>{post.mediaType || 'Post'}</strong>
-                    <p>{post.caption || 'No caption provided.'}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No recent posts found yet.</p>
-              )}
-            </div>
-          </>
-        ) : null}
-      </div>
-    </section>
+        <div className="card">
+          <h2>🔥 Recent Posts</h2>
+          {loading ? (
+              <p>Loading...</p>
+          ) : posts.length === 0 ? (
+              <p>No posts yet — be the first to share something!</p>
+          ) : (
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {posts.map(post => (
+                    <li key={post.id} style={{ borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <strong style={{ color: 'var(--text-primary)' }}>{post.title}</strong>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {post.mediaType}
+                  </span>
+                      </div>
+                      {post.user && (
+                          <p style={{ fontSize: '0.8rem', margin: '0.25rem 0 0', color: 'var(--text-secondary)' }}>
+                            by {post.user.name}
+                          </p>
+                      )}
+                    </li>
+                ))}
+              </ul>
+          )}
+        </div>
+      </section>
   )
 }
 
