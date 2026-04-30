@@ -44,8 +44,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/auth/register", "/api/users/auth/login").permitAll()
                         .requestMatchers("/api/posts/**").permitAll()
                         .requestMatchers("/api/comments/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api/gifs/**").permitAll()
                         .requestMatchers("/api/soundcloud/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));

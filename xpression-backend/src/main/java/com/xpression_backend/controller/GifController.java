@@ -4,13 +4,11 @@ import com.xpression_backend.model.Gif;
 import com.xpression_backend.service.GifService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/gifs")
-@CrossOrigin(origins = "http://localhost:5173")
 public class GifController {
 
     private final GifService gifService;

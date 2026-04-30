@@ -4,6 +4,7 @@ import com.xpression_backend.model.Post;
 import com.xpression_backend.model.User;
 import com.xpression_backend.security.JwtUtil;
 import com.xpression_backend.service.PostService;
+import com.xpression_backend.service.SoundCloudService;
 import com.xpression_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,14 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final SoundCloudService soundCloudService;
 
-    public PostController(PostService postService, UserService userService, JwtUtil jwtUtil) {
+    public PostController(PostService postService, UserService userService,
+                          JwtUtil jwtUtil, SoundCloudService soundCloudService) {
         this.postService = postService;
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.soundCloudService = soundCloudService;
     }
 
     @PostMapping
@@ -37,7 +41,21 @@ public class PostController {
                 }
             }
         }
-        return ResponseEntity.ok(postService.createPost(post));
+
+        Post savedPost = postService.createPost(post);
+
+        if ("MUSIC".equals(savedPost.getMediaType()) &&
+                savedPost.getContent() != null &&
+                savedPost.getContent().contains("soundcloud.com")) {
+            String content = savedPost.getContent();
+            // Extract just the URL if there's text before it
+            int urlStart = content.indexOf("https://soundcloud.com");
+            if (urlStart == -1) urlStart = content.indexOf("http://soundcloud.com");
+            String soundCloudUrl = urlStart >= 0 ? content.substring(urlStart) : content;
+            soundCloudService.fetchAndStore(soundCloudUrl.trim(), savedPost);
+        }
+
+        return ResponseEntity.ok(savedPost);
     }
 
     @GetMapping
