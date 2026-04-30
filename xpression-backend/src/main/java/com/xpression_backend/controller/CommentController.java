@@ -1,29 +1,24 @@
 package com.xpression_backend.controller;
 
-import com.xpression.backend.model.Comment;
-import com.xpression.backend.service.CommentService;
+import com.xpression_backend.model.Comment;
+import com.xpression_backend.service.CommentService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api/comments") // Base path for all comment endpoints
 public class CommentController {
 
     private final CommentService commentService;
-  
+
+    // Constructor Injection for Autowiring [cite: 73]
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 
-    @PostMapping
-    public Comment createComment(@RequestBody Comment comment) {
-        return commentService.createComment(comment);
-    }
-
     @GetMapping
-    public Iterable<Comment> getAllComments() {
+    public List<Comment> getAllComments() {
         return commentService.getAllComments();
     }
 
@@ -35,6 +30,11 @@ public class CommentController {
     @GetMapping("/post/{postId}")
     public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
         return commentService.getCommentsByPostId(postId);
+    }
+
+    @PostMapping // Connects to React Form Page [cite: 44]
+    public Comment createComment(@RequestBody Comment comment) {
+        return commentService.createComment(comment);
     }
 
     @PutMapping("/{id}")
