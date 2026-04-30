@@ -33,7 +33,7 @@ function Home() {
 
         <div className="card-grid">
           <Link to="/data-display" className="card">
-            <h2>View content data</h2>
+            <h2>View Posts </h2>
             <p>Open the data display page to fetch and render existing posts from the backend.</p>
           </Link>
           <Link to="/form" className="card">

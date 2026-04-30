@@ -6,10 +6,28 @@ function FormPage() {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [soundCloudEmbed, setSoundCloudEmbed] = useState('')
+  const [loadingEmbed, setLoadingEmbed] = useState(false)
 
   const handleChange = (event) => {
     const { name, value } = event.target
     setFormData(current => ({ ...current, [name]: value }))
+    if (name === 'content' && formData.mediaType === 'MUSIC') {
+      setSoundCloudEmbed('')
+    }
+  }
+
+  const handlePreviewSoundCloud = async () => {
+    if (!formData.content) return
+    try {
+      setLoadingEmbed(true)
+      const response = await client.get(`/soundcloud/oembed?url=${encodeURIComponent(formData.content)}`)
+      setSoundCloudEmbed(response.data?.html || '')
+    } catch (err) {
+      setError('Could not load SoundCloud preview. Make sure the URL is valid.')
+    } finally {
+      setLoadingEmbed(false)
+    }
   }
 
   const handleSubmit = async (event) => {
@@ -22,6 +40,7 @@ function FormPage() {
       await client.post('/posts', formData)
       setSuccess('Post created successfully!')
       setFormData({ title: '', content: '', mediaType: 'TEXT' })
+      setSoundCloudEmbed('')
     } catch (err) {
       setError('Failed to create post. Please try again.')
     } finally {
@@ -33,7 +52,7 @@ function FormPage() {
       <section className="page">
         <div className="page-header">
           <p className="eyebrow">Create Content</p>
-          <h1>Form Page</h1>
+          <h1>New Post</h1>
           <p>Share your creative work with the Xpression community.</p>
         </div>
 
@@ -56,7 +75,7 @@ function FormPage() {
               <select name="mediaType" value={formData.mediaType} onChange={handleChange}>
                 <option value="TEXT">Text / Writing</option>
                 <option value="IMAGE">Image / Art</option>
-                <option value="MUSIC">Music</option>
+                <option value="MUSIC">Music (SoundCloud)</option>
               </select>
             </label>
 
@@ -70,13 +89,31 @@ function FormPage() {
                   rows={6}
                   placeholder={
                     formData.mediaType === 'MUSIC'
-                        ? 'Paste your SoundCloud or Spotify link here'
+                        ? 'Paste your SoundCloud URL here'
                         : formData.mediaType === 'IMAGE'
-                            ? 'Paste your image URL or describe your artwork'
+                            ? 'Paste your image URL here'
                             : 'Write your content here...'
                   }
               />
             </label>
+
+            {formData.mediaType === 'MUSIC' && formData.content && (
+                <button
+                    type="button"
+                    onClick={handlePreviewSoundCloud}
+                    style={{ marginBottom: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}
+                    disabled={loadingEmbed}
+                >
+                  {loadingEmbed ? 'Loading preview...' : 'Preview SoundCloud Track'}
+                </button>
+            )}
+
+            {soundCloudEmbed && (
+                <div
+                    style={{ marginBottom: '1rem' }}
+                    dangerouslySetInnerHTML={{ __html: soundCloudEmbed }}
+                />
+            )}
 
             <button type="submit" className="primary-button" disabled={submitting}>
               {submitting ? 'Publishing...' : 'Publish Post'}
