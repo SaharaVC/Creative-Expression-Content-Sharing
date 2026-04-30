@@ -25,8 +25,10 @@ public class UserController {
 
     // REGISTER
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
+        User savedUser = userService.createUser(user);
+        String token = jwtUtil.generateToken(savedUser.getEmail());
+        return ResponseEntity.ok(Map.of("token", token, "user", savedUser));
     }
 
     // LOGIN
