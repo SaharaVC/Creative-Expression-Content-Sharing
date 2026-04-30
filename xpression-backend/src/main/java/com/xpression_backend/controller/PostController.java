@@ -1,7 +1,10 @@
 package com.xpression_backend.controller;
 
 import com.xpression_backend.model.Post;
+import com.xpression_backend.model.User;
+import com.xpression_backend.security.JwtUtil;
 import com.xpression_backend.service.PostService;
+import com.xpression_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,13 +15,28 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, UserService userService, JwtUtil jwtUtil) {
         this.postService = postService;
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
+    public ResponseEntity<Post> createPost(@RequestBody Post post,
+                                           @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            if (jwtUtil.validateToken(token)) {
+                String email = jwtUtil.extractEmail(token);
+                User user = userService.findByEmail(email);
+                if (user != null) {
+                    post.setUser(user);
+                }
+            }
+        }
         return ResponseEntity.ok(postService.createPost(post));
     }
 

@@ -3,6 +3,7 @@ package com.xpression_backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "posts")
@@ -22,6 +23,11 @@ public class Post {
 
     private LocalDateTime date;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"password"})
+    private User user;
+
     @PrePersist
     protected void onCreate() {
         this.date = LocalDateTime.now();
@@ -37,4 +43,6 @@ public class Post {
     public void setMediaType(String mediaType) { this.mediaType = mediaType; }
     public LocalDateTime getDate() { return date; }
     public void setDate(LocalDateTime date) { this.date = date; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

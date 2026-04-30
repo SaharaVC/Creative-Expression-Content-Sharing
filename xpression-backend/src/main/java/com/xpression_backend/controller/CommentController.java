@@ -1,9 +1,12 @@
 package com.xpression_backend.controller;
 
 import com.xpression_backend.model.Comment;
-import com.xpression_backend.service.CommentService;
 import com.xpression_backend.model.Post;
+import com.xpression_backend.model.User;
+import com.xpression_backend.security.JwtUtil;
+import com.xpression_backend.service.CommentService;
 import com.xpression_backend.service.PostService;
+import com.xpression_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,10 +18,15 @@ public class CommentController {
 
     private final CommentService commentService;
     private final PostService postService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public CommentController(CommentService commentService, PostService postService) {
+    public CommentController(CommentService commentService, PostService postService,
+                             UserService userService, JwtUtil jwtUtil) {
         this.commentService = commentService;
         this.postService = postService;
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -37,12 +45,26 @@ public class CommentController {
     }
 
     @PostMapping("/post/{postId}")
-    public ResponseEntity<Comment> createComment(@PathVariable Long postId, @RequestBody Comment comment) {
+    public ResponseEntity<Comment> createComment(@PathVariable Long postId,
+                                                 @RequestBody Comment comment,
+                                                 @RequestHeader(value = "Authorization", required = false) String authHeader) {
         Optional<Post> post = postService.getPostById(postId);
         if (post.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         comment.setPost(post.get());
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            if (jwtUtil.validateToken(token)) {
+                String email = jwtUtil.extractEmail(token);
+                User user = userService.findByEmail(email);
+                if (user != null) {
+                    comment.setUser(user);
+                }
+            }
+        }
+
         return ResponseEntity.ok(commentService.createComment(comment));
     }
 
