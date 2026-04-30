@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -23,39 +22,34 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    // REGISTER
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
         User savedUser = userService.createUser(user);
         String token = jwtUtil.generateToken(savedUser.getEmail());
         return ResponseEntity.ok(Map.of("token", token, "user", savedUser));
     }
 
-    // LOGIN
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         User found = userService.findByEmail(user.getEmail());
         if (found != null && new BCryptPasswordEncoder()
                 .matches(user.getPassword(), found.getPassword())) {
             String token = jwtUtil.generateToken(found.getEmail());
-            return ResponseEntity.ok(Map.of("token", token));
+            return ResponseEntity.ok(Map.of("token", token, "user", found));
         }
         return ResponseEntity.status(401).body("Invalid credentials");
     }
 
-    // GET ALL
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
