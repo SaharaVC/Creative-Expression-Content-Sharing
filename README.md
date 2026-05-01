@@ -1,6 +1,6 @@
 # Creative Expression Content Sharing: Xpression
 
-## Mileston 1: Project Proposal
+## Milestone 1: Project Proposal
 
 ### Concept of Application: 
 Xpression is a platform where artists, writers, and musicians can publish their work, receive feedback, and build a personal portfolio. Unlike general social media, Xpression is designed around the creative process, writing, visual art, and music in a single space.
@@ -150,5 +150,137 @@ Comment
 [![Watch the video](https://img.youtube.com/vi/R74p7Y9iKf8/0.jpg)](https://youtu.be/R74p7Y9iKf8?si=IctmRDjr3oS4gfje)
 
 ---
-## Milestone 3:
+## Milestone 3: Full Stack Integration
 
+### Tech Stack
+- **Frontend:** React (Vite), React Router, Axios, Context API
+- **Backend:** Spring Boot 4.0.5, Spring Data JPA, Spring Security
+- **Database:** H2 (in-memory)
+- **External APIs:** Giphy API, SoundCloud API
+
+## Frontend (ReactJS)
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Home/Dashboard | `/` | Platform overview and navigation |
+| Data Display | `/data` | Fetches and displays all posts via `GET /api/posts` |
+| Form Page | `/form` | Submits new posts via `POST /api/posts` with validation |
+| Login | `/login` | Authenticates users and stores JWT token |
+| Register | `/register` | Creates new user accounts |
+| Create Post | `/create-post` | Protected post creation page |
+
+**Key implementation details:**
+- React Router handles all page navigation
+- `useState` and `useReducer` used throughout for state management
+- `AuthContext` manages global authentication state across the app
+- `ProtectedRoute` component restricts access to authenticated users
+- Axios `client.js` handles all API calls with automatic JWT token injection via interceptor
+- Responsive layout with consistent dark theme styling across all pages
+
+### Database Integration
+
+**Configuration:** H2 in-memory database via `application.properties`
+
+<img width="1637" height="593" alt="image" src="https://github.com/user-attachments/assets/8dcc75c7-4f5d-4e45-ba2d-50db88107f5a" />
+
+**Validation:** Jakarta Bean Validation (`@NotBlank`, `@Email`, `@Size`) applied to all entities
+
+### Authentication & Security
+
+* Spring Security configured with stateless JWT-based authentication
+* Passwords hashed with `BCryptPasswordEncoder`
+* JWT tokens generated and validated via `JwtUtil`
+* `ProtectedRoute` on frontend restricts pages to authenticated users
+
+### API Endpoint Table
+
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|--------------|-------------|
+| POST | `/api/users/auth/register` | No | Register new user, returns JWT |
+| POST | `/api/users/auth/login` | No | Login, returns JWT |
+| GET | `/api/users` | Yes | Get all users |
+| GET | `/api/users/{id}` | Yes | Get user by ID |
+| DELETE | `/api/users/{id}` | Yes | Delete user |
+| GET | `/api/posts` | No | Get all posts |
+| POST | `/api/posts` | No | Create a new post |
+| GET | `/api/posts/{id}` | No | Get post by ID |
+| PUT | `/api/posts/{id}` | No | Update a post |
+| DELETE | `/api/posts/{id}` | No | Delete a post |
+| GET | `/api/comments` | No | Get all comments |
+| POST | `/api/comments` | No | Create a comment |
+| GET | `/api/comments/post/{postId}` | No | Get comments by post |
+| DELETE | `/api/comments/{id}` | No | Delete a comment |
+| GET | `/api/gifs/search?query=` | No | Search Giphy for GIFs |
+| POST | `/api/gifs` | No | Save a selected GIF |
+| GET | `/api/soundcloud/**` | No | SoundCloud track data |
+
+### Example API Responses
+
+**POST /api/users/auth/register**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": 1,
+    "name": "Sahara",
+    "email": "sahara@example.com"
+  }
+}
+```
+
+**GET /api/posts**
+```json
+[
+  {
+    "id": 1,
+    "title": "My First Poem",
+    "content": "helloooooo",
+    "mediaType": "TEXT",
+    "date": "2026-04-30T15:44:45"
+  }
+]
+```
+
+**GET /api/gifs/search?query=happy**
+```json
+[
+  {
+    "giphyId": "0ixAZaU8Gp8R5TdRQT",
+    "previewUrl": "https://media2.giphy.com/...",
+    "url": "https://media2.giphy.com/..."
+  }
+]
+```
+
+### How to Run
+
+**Backend:**
+1. Open `xpression-backend` in IntelliJ
+2. Run `XpressionBackendApplication.java`
+3. Backend runs at `http://localhost:8080`
+
+**Frontend:**
+1. Navigate to `Milestone 3/frontend`
+2. Run `npm install` then `npm run dev`
+3. Frontend runs at `http://localhost:5173`
+
+### AI Usage Log
+
+AI assistance (Claude by Anthropic) was used throughout Milestone 3 for:
+* Generating Spring Boot entity, repository, service, and controller boilerplate
+* Debugging merge conflicts in `application.properties`
+* Identifying and fixing duplicate `RestTemplate` bean definition error
+* Resolving Giphy API response format mismatch between backend and frontend
+* Writing and iterating on `GifSearch.jsx` component
+* Advising on `pom.xml` dependency additions for Spring Security and JJWT
+* Troubleshooting H2 console access issues with Spring Boot 4.0.5
+* Fixing `ProtectedRoute` redirect causing blank page on unauthenticated access
+* Writing README documentation for Milestone 3
+
+---
+## Milestone 4: Automated Testing Results
+
+<img width="1253" height="652" alt="image" src="https://github.com/user-attachments/assets/f34cae95-003d-431f-a652-b7033db3a6b2" />
+
+---
+<img width="1653" height="720" alt="image" src="https://github.com/user-attachments/assets/4e11d7b1-5ccb-4c63-95f8-aa7590963184" />
