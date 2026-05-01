@@ -89,6 +89,11 @@ Comment
 ## Architecture Diagram
 <img width="658" height="497" alt="image" src="https://github.com/user-attachments/assets/4478a3b9-0972-4456-a362-bef04da8757e" />
 
+## Ai Usage
+* Assisted in structuring the project proposal including problem statement, target users, and value proposition
+* Helped define system modules and entity/data object relationships (User, Post, Comment)
+* Provided guidance on external API selection and use case documentation for Giphy and SoundCloud APIs
+
 ---
 ## Milestone 2: Product Backlog
 
@@ -147,7 +152,7 @@ Comment
 
 ## [Demonstration Video](https://youtu.be/R74p7Y9iKf8?si=IctmRDjr3oS4gfje)
 
-[![Watch the video](https://img.youtube.com/vi/R74p7Y9iKf8/0.jpg)](https://youtu.be/R74p7Y9iKf8?si=IctmRDjr3oS4gfje)
+[![Watch the video here!](https://img.youtube.com/vi/R74p7Y9iKf8/0.jpg)](https://youtu.be/R74p7Y9iKf8?si=IctmRDjr3oS4gfje)
 
 ---
 ## Milestone 3: Full Stack Integration
@@ -264,6 +269,9 @@ Comment
 2. Run `npm install` then `npm run dev`
 3. Frontend runs at `http://localhost:5173`
 
+## [Demonstration Video](https://www.youtube.com/watch?v=Ta3vxIQ9MX0&feature=youtu.be)
+![Watch the Demo Here](https://img.youtube.com/vi/Ta3vxIQ9MX0/maxresdefault.jpg)
+
 ### AI Usage Log
 
 AI assistance (Claude by Anthropic) was used throughout Milestone 3 for:
@@ -275,7 +283,6 @@ AI assistance (Claude by Anthropic) was used throughout Milestone 3 for:
 * Advising on `pom.xml` dependency additions for Spring Security and JJWT
 * Troubleshooting H2 console access issues with Spring Boot 4.0.5
 * Fixing `ProtectedRoute` redirect causing blank page on unauthenticated access
-* Writing README documentation for Milestone 3
 
 ---
 ## Milestone 4: Automated Testing Results
@@ -284,3 +291,57 @@ AI assistance (Claude by Anthropic) was used throughout Milestone 3 for:
 
 ---
 <img width="1653" height="720" alt="image" src="https://github.com/user-attachments/assets/4e11d7b1-5ccb-4c63-95f8-aa7590963184" />
+
+### Improvements Identified & Implemented
+
+**Improvement 1: GIF Search Crash Fix**
+* Before: Clicking "Attach a GIF" caused a blank white page due to `JSON.parse()` being called on an already-parsed Axios response and incorrect Giphy data field mapping
+* After: Removed `JSON.parse()`, switched to `response.data` directly, and updated image src to use `gif.previewUrl` matching the actual backend response format
+* Evidence: GIF search now loads and displays results correctly
+
+**Improvement 2: Protected Route Blank Page Fix**
+* Before: Unauthenticated users clicking feed or form links were silently redirected to `/login`, resulting in a blank screen with no explanation
+* After: Removed `ProtectedRoute` wrapper from public-facing pages so all users can browse and submit posts without being blocked
+* Evidence: All pages now load correctly without authentication
+
+## Accessibility & Ethics
+
+### WCAG Accessibility Checklist
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Color contrast — text on background | Pass | `#f0f0ff` on `#0a0a0f` exceeds WCAG AAA ratio |
+| Color contrast — buttons | Pass | Primary button colors meet AA standard |
+| Alt text on GIF images | Present | `alt={gif.giphyId}` present on all GIF results |
+| Form inputs have labels | Pass | All `<input>` elements wrapped in `<label>` tags |
+| Buttons have descriptive text | Pass | "Login", "Register", "Submit Post", "Search" |
+| Keyboard navigation | Pass | Standard HTML form elements support tab navigation |
+| Page headings present | Pass | Each page has an `<h1>` element |
+
+### Ethical Considerations
+
+| Practice | Implementation |
+|----------|---------------|
+| Password security | Hashed with `BCryptPasswordEncoder` — never stored in plain text |
+| Session security | JWT tokens expire after 24 hours limiting exposure window |
+| Data privacy | No user data sold or shared with third parties |
+| API compliance | Giphy API used within their published terms of service |
+| Development data | H2 in-memory database resets on restart — no persistent sensitive data stored locally |
+| Transparency | Users shown clear error messages without exposing internal system details |
+
+### AI Usage Log
+
+**AI assistance (Claude by Anthropic) was used for:**
+* Verifying Vitest/React Testing Library frontend test structure and API mock setup
+* Reviewing and verifying JUnit test coverage against entity relationships
+* Identifying accessibility improvements for GIF image alt text
+* Documenting performance measurements and usability findings
+
+## Milestone 5: Team Presentation
+### [Presentation Link](https://www.canva.com/design/DAHIWdyfoCg/2hwmjS_qq1HRz1Nx0wyKgQ/edit)
+[![Presentation Slides](https://github.com/user-attachments/assets/35308ef6-1332-41f8-91c8-c0db83c2ef5c)](https://www.canva.com/design/DAHIWdyfoCg/2hwmjS_qq1HRz1Nx0wyKgQ/edit)
+
+### AI Usage
+* Assisted in structuring the 7-minute team presentation including talking points for the live demo, architecture summary slide, and technical challenge highlight around the Giphy API debugging process
+* Helped write the individual reflection covering personal contributions across backend, frontend, testing, and documentation as well as ethical and AI use considerations
+* Assisted in writing the team summary report including architecture overview, testing summary, future improvement plans, and team roles
