@@ -1,5 +1,4 @@
 # Individual Reflection — Sahara Calloway
-## Xpression | Creative Expression & Content Sharing Platform
 
 ### My Contributions
 
