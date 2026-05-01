@@ -341,7 +341,127 @@ AI assistance (Claude by Anthropic) was used throughout Milestone 3 for:
 ### [Presentation Link](https://www.canva.com/design/DAHIWdyfoCg/2hwmjS_qq1HRz1Nx0wyKgQ/edit)
 [![Presentation Slides](https://github.com/user-attachments/assets/35308ef6-1332-41f8-91c8-c0db83c2ef5c)](https://www.canva.com/design/DAHIWdyfoCg/2hwmjS_qq1HRz1Nx0wyKgQ/edit)
 
-### AI Usage
-* Assisted in structuring the 7-minute team presentation including talking points for the live demo, architecture summary slide, and technical challenge highlight around the Giphy API debugging process
-* Helped write the individual reflection covering personal contributions across backend, frontend, testing, and documentation as well as ethical and AI use considerations
-* Assisted in writing the team summary report including architecture overview, testing summary, future improvement plans, and team roles
+## Xpression – Team Summary Report
+
+### Project Overview
+Xpression is a unified creative expression platform where writers, artists,
+and musicians can publish their work, receive structured feedback, and build
+a personal portfolio. The platform supports three media types: text writing,
+image art, and music via SoundCloud links.
+
+### Architecture Overview
+
+**Frontend**
+- **Framework:** React + Vite
+- **Routing:** React Router DOM
+- **API Calls:** Axios with JWT interceptor
+- **Auth State:** React Context API
+- **Styling:** Custom CSS with dark mode design
+
+**Backend**
+- **Framework:** Spring Boot 4.0.5
+- **Security:** Spring Security + JWT (jjwt 0.12.3)
+- **Database ORM:** Spring Data JPA
+- **Password Hashing:** BCrypt
+- **Build Tool:** Maven
+
+**Database**
+- **Type:** H2 In-Memory Database
+- **Schema:** Auto-generated via Hibernate DDL
+
+**External APIs**
+- **SoundCloud oEmbed API** — fetches and stores track metadata
+- **Giphy API** — searches and stores GIFs attached to comments
+
+### Database Schema
+
+**Entities & Relationships**
+- **User** → Posts (One to Many)
+- **User** → Comments (One to Many)
+- **Post** → Comments (One to Many)
+- **Post** → SoundCloudTrack (One to One)
+- **Comment** → Gifs (One to Many)
+
+Features
+- User registration and login with JWT authentication
+- BCrypt password hashing
+- Create posts — TEXT, IMAGE, and MUSIC types
+- Community feed with media type filtering
+- SoundCloud embedded player with stored track metadata
+- Giphy GIF search and attachment to comments
+- Username displayed on all posts and comments
+- Protected routes — authentication required to post and comment
+
+### API Endpoints
+
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|---------------|-------------|
+| POST | /api/users/auth/register | No | Register a new user |
+| POST | /api/users/auth/login | No | Login and receive JWT token |
+| GET | /api/users | No | Get all users |
+| GET | /api/users/{id} | No | Get user by ID |
+| DELETE | /api/users/{id} | Yes | Delete a user |
+| GET | /api/posts | No | Get all posts |
+| POST | /api/posts | Yes | Create a new post |
+| GET | /api/posts/{id} | No | Get post by ID |
+| GET | /api/posts/media/{type} | No | Filter posts by media type |
+| PUT | /api/posts/{id} | Yes | Update a post |
+| DELETE | /api/posts/{id} | Yes | Delete a post |
+| GET | /api/comments | No | Get all comments |
+| POST | /api/comments/post/{id} | Yes | Add comment to a post |
+| GET | /api/comments/post/{id} | No | Get comments for a post |
+| PUT | /api/comments/{id} | Yes | Update a comment |
+| DELETE | /api/comments/{id} | Yes | Delete a comment |
+| GET | /api/gifs/search | No | Search Giphy for GIFs |
+| POST | /api/gifs | Yes | Save GIF to comment |
+| GET | /api/gifs/comment/{id} | No | Get GIFs for a comment |
+| GET | /api/soundcloud/oembed | No | Fetch SoundCloud oEmbed data |
+| GET | /api/soundcloud/track/{id} | No | Get stored track by post ID |
+
+## Testing Summary
+
+### Backend Tests (JUnit) — 9/9 Passed
+- testCreateUser ✅
+- testFindUserByEmail ✅
+- testDeleteUser ✅
+- testCreatePost ✅
+- testGetAllPosts ✅
+- testDeletePost ✅
+- testCreateComment ✅
+- testGetCommentsByPostId ✅
+- testFilterPostsByMediaType ✅
+
+### Frontend Tests (Vitest) — 6/6 Passed
+- Login Page renders login form ✅
+- Register Page renders register form ✅
+- Form Page renders post creation form ✅
+- Form Page has TEXT IMAGE MUSIC options ✅
+- Login Error shows error on failed login ✅
+- Register Error shows error on failed registration ✅
+
+## Future Improvements
+- Switch from H2 to MySQL for persistent storage
+- Add follow system and personalized feed
+- Implement notification system
+- Add post editing and deletion from the frontend UI
+- Deploy to cloud (AWS or Render)
+- Add Tenor GIF API as a second GIF provider
+
+## Team Roles & Acknowledgments
+
+| Team Member | Role |
+|-------------|------|
+| Sahara | Backend: JWT Auth, Spring Security, Post/Comment implementation |
+| Trinity | Frontend: React UI, Giphy API integration, testing |
+| Leeyand | External API: SoundCloud integration, database schema |
+
+## AI Usage Log
+Claude (Anthropic) was used throughout this project to assist with:
+- JWT authentication implementation
+- Spring Security configuration
+- React component development
+- SoundCloud oEmbed API integration
+- Debugging merge conflicts and build errors
+- Writing JUnit and Vitest test cases
+- UI/UX design and CSS styling
+- Git branch management
